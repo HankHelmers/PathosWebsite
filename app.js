@@ -45,7 +45,7 @@ const APIController = (function() {
     }
 
     const _getTracks = async (token, tracksEndPoint) => {
-        const limit = 100;
+        const limit = 70;
 
         const result = await fetch(`${tracksEndPoint}?limit=${limit}`, {
             method: 'GET',
@@ -264,32 +264,80 @@ const APPController = (function(UICtrl, APICtrl) {
         const numPlaylists = playlistsData.length;
 
         console.log(numPlaylists)
-        if(numPlaylists < 1) {
-            // tell the user we didn't find any information under that userId, 
-            // either incorrect user id or no public playlists
-            console.log("No playlists found")
-        } else {
+        if(numPlaylists >= 1) {            
             // save playlist tracks data into a array :)
             
             // ONLY DOES 1 PLAYLIST ATM******
+
+            // GET TRACKS FOR PLAYSTS
             const trackGetLink = playlistsData[0].tracks.href;
-            tracksData = await APICtrl.getTracks(token, trackGetLink)
+            tracksData = await APICtrl.getTracks(token, trackGetLink) // holds all the tracks data from playlist
             
             console.log(tracksData)
 
-            trackIds = [];
+            trackIds = []; // holds the ids of this playlists tracks
 
             for(let i = 0; i < tracksData.length; i++) {
-                trackIds[i] = tracksData[i].track.id;
+                trackIds[i] = tracksData[i].track.id; // get only the track ids
             }
 
             console.log(trackIds)
-            
 
+            completeDataEntries = [];
 
+            // ADD ALL TRACK AUDIO FEATURES TO COMPLETE DATA ENTRIES
+            for(let i = 0; i < tracksData.length;i++) { 
+                audioFeatureData = await APICtrl.getTrackAudioFeatures(token, trackIds[i])
 
+                completeDataEntries[i] = [
+                    tracksData[i].track.name,
+                    audioFeatureData.acousticness,
+                    audioFeatureData.danceability,
+                    audioFeatureData.energy,
+                    audioFeatureData.duration_ms,
+                    audioFeatureData.instrumentalness,
+                    audioFeatureData.liveness,
+                    audioFeatureData.loudness,
+                    audioFeatureData.tempo,
+                    audioFeatureData.valence,
+                ]
+            } 
+
+            console.log(completeDataEntries)
+
+            downloadCSVFile(completeDataEntries);
+        } else {
+            // tell the user we didn't find any information under that userId, 
+            // either incorrect user id or no public playlists
+            console.log("No playlists found")
         }
     }
+
+    function downloadCSVFile(completeDataEntries) {
+         //define the heading for each row of the data  
+        var csv = 'name,acousticness,danceability,energy,duration_ms,instrumentalness,liveness,loudness,tempo,valence\n';  
+        
+        //merge the data with CSV  
+        completeDataEntries.forEach(function(row) {  
+                
+            // if name has a comma => make it a space
+            if(row[0].includes(',')) {
+                row[0] = row[0].replace(",", " ")
+            }
+
+            csv += row.join(',');  
+            csv += "\n";  
+        });  
+    
+        var hiddenElement = document.createElement('a');  
+        hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);  
+        hiddenElement.target = '_blank';  
+          
+        //provide the name for the CSV file to be downloaded  
+        hiddenElement.download = 'Song Data.csv';  
+        hiddenElement.click();   
+    }
+    
 
     // create genre change event listener
     // DOMInputs.genre.addEventListener('change', async () => {
