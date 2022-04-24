@@ -22,7 +22,6 @@ const APIController = (function() {
         return data.access_token;
     }
     
-
     const _getGenres = async (token) => {
         const result = await fetch(`https://api.spotify.com/v1/browse/categories?locale=sv_US`, {
             method: 'GET',
@@ -57,6 +56,17 @@ const APIController = (function() {
         return data.items;
     }
 
+    const _getTrackAudioFeatures = async(token, trackId) => {
+        //  https://api.spotify.com/v1/audio-features/id
+        const result = await fetch(`https://api.spotify.com/v1/audio-features/${trackId}`, {
+            method: 'GET',
+            headers: { 'Authorization' : 'Bearer ' + token}
+        });
+
+        const data = await result.json();
+        return data;
+    }
+
     const _getTrack = async (token, trackEndPoint) => {
         const result = await fetch(`${trackEndPoint}`, {
             method: 'GET',
@@ -78,6 +88,11 @@ const APIController = (function() {
         });
     
         const data = await result.json();
+
+        if(data.error != null) {
+            return "ERROR"
+        }
+
         console.log(data)
         return data.items;
     }
@@ -103,6 +118,9 @@ const APIController = (function() {
         },
         getTrack(token, trackEndPoint) {
             return _getTrack(token, trackEndPoint);
+        },
+        getTrackAudioFeatures(token, trackId) {
+            return _getTrackAudioFeatures(token, trackId)
         }
     }
 })();
@@ -226,16 +244,18 @@ const APPController = (function(UICtrl, APICtrl) {
         console.log(token)
         const playlistData = await APICtrl.getUserPlaylists(token, e.target.value);
 
-        savePlaylistData(playlistData);
+
+        // check that we actually got the data 
+        if(playlistData == "ERROR") {
+            console.log("Something went wrong with that id try again");
+        } else {
+            console.log(playlistData);
+            savePlaylistData(playlistData);
+        }
     });
 
     const savePlaylistData = async(playlistsData) => {
-        // check if successful request
-        console.log(playlistsData.status)
-        if(playlistsData.status != "200") {
-            console.log("NOTHING FOUND")
-        }
-
+        // check if successful requests
 
         console.log("Saving playlist data...")
         console.log(playlistsData)
@@ -251,6 +271,7 @@ const APPController = (function(UICtrl, APICtrl) {
         } else {
             // save playlist tracks data into a array :)
             
+            // ONLY DOES 1 PLAYLIST ATM******
             const trackGetLink = playlistsData[0].tracks.href;
             tracksData = await APICtrl.getTracks(token, trackGetLink)
             
@@ -263,6 +284,9 @@ const APPController = (function(UICtrl, APICtrl) {
             }
 
             console.log(trackIds)
+            
+
+
 
         }
     }
@@ -313,7 +337,7 @@ const APPController = (function(UICtrl, APICtrl) {
     return {
         init() {
             console.log('App is starting');
-            loadToken();
+            loadToken(); // STARTS RUN DOWN
         }
     }
 
