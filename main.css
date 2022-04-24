@@ -1,4 +1,12 @@
-.btn.dropdown-toggle  {
+.center {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+    text-align: center;
+}
+
+
+/* .btn.dropdown-toggle  {
     width:150px;
     text-align:left;
 }
@@ -32,4 +40,4 @@ img {
 
 img.track {
     border: 1px solid #8a8a8a;
-}
+} */

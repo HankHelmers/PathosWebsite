@@ -3,32 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotify Web API Tutorial</title>
+    <title>Pathos</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="main.css">
 </head>
 <body>
+    <!-- BACKGROUND IMAGES-->
+    <div class="bg-image" 
+         style="background-image: 'CPS Design FINAL .jpg';
+            height: 100vh">
     
+
+    <h1 class="center">Welcome to Pathos</h1>
+    <p class="center">To download your Spotify Information for our application, simiply press the button below. 
+        You will first have to authorize our use of your data and then soon your data will be downloaded for you.
+    </p>
     <div class="container">  
               
         <form action="">
-            <input type="hidden" id='hidden_token'>
-            <div class="col-sm-6 form-group row mt-4 px-0">
+             <input type="hidden" id='hidden_token'>
+            <!--<div class="col-sm-6 form-group row mt-4 px-0">
                 <label for="Genre" class="form-label col-sm-2">Genre:</label>
                 <select name="" id="select_genre" class="form-control form-control-sm col-sm-10">
                     <option>Select...</option>                    
                 </select>
-            </div>
+            </div> -->
 
             <div class="col-sm-6 form-group row px-0">
-                <label for="Genre" class="form-label col-sm-2">Playlists:</label>
-                <select name="" id="select_playlist" class="form-control form-control-sm col-sm-10">
-                    <option>Select...</option>                    
-                </select>
-            </div>  
+                <label for="UserId" class="form-label col-sm-2">UserId: </label>
+                <input class="form-control col-sm-2 center" id="select_id" placeholder="Enter User Id">
+            </div>    
 
-            <div class="col-sm-6 row form-group px-0">
-                <button type="submit" id="btn_submit" class="btn btn-success col-sm-12">Search</button>
+            <div class="col-sm-6 row form-group px-0 center">
+                <button type="submit" id="btn_submit" class="btn btn-success col-sm-12">Download your Spotify Data</button>
             </div>          
         </form> 
 
@@ -40,7 +47,11 @@
             </div>
             <div class="offset-md-1 col-sm-4" id="song-detail">                
             </div>
-        </div>   
+        </div>  
+        
+        
+    </div>
+
     </div>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
