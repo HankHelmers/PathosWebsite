@@ -15,13 +15,16 @@
     
 
     <h1 class="center">Welcome to Pathos</h1>
-    <p class="center">To download your Spotify Information for our application, simiply press the button below. 
+    <!-- <p class="center">To download your Spotify Information for our application, simiply press the button below. 
         You will first have to authorize our use of your data and then soon your data will be downloaded for you.
-    </p>
+    </p> -->
     <div class="container">  
-              
-        <form action="">
+        
+        <!-- By default, forms are submitted when inputted information is submitted => so we prevent that behaviors-->
+        <form onsubmit="event.preventDefault();"> 
              <input type="hidden" id='hidden_token'>
+             <input type="hidden" id='playlist_json'>
+             
             <!--<div class="col-sm-6 form-group row mt-4 px-0">
                 <label for="Genre" class="form-label col-sm-2">Genre:</label>
                 <select name="" id="select_genre" class="form-control form-control-sm col-sm-10">
@@ -29,13 +32,18 @@
                 </select>
             </div> -->
 
-            <div class="col-sm-6 form-group row px-0">
-                <label for="UserId" class="form-label col-sm-2">UserId: </label>
-                <input class="form-control col-sm-2 center" id="select_id" placeholder="Enter User Id">
+            <div class="col-sm-6 form-group row px-0 center">
+                <!-- <label class="form-label">Enter Spotify User Id and press enter:</label> -->
+                <input type="text" class="form-control" id="select_id" placeholder="Enter Spotify User Id and Press Enter">
+                <!-- <input  id="myText" value="Mickey"> -->
             </div>    
 
+            <div class="col-sm-6 form-group row px-0 center">
+                <p id="message_text" hidden></p>
+            </div>
+
             <div class="col-sm-6 row form-group px-0 center">
-                <button type="submit" id="btn_submit" class="btn btn-success col-sm-12">Download your Spotify Data</button>
+                <button type="button" id="btn_submit" class="btn col-sm-12" hidden>Download your Spotify Data</button>
             </div>          
         </form> 
 

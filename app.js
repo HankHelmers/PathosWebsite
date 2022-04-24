@@ -78,10 +78,6 @@ const APIController = (function() {
     }
 
     const _getUserPlaylists = async (token, userId) => {
-        /*
-        curl -X "GET" "https://api.spotify.com/v1/users//playlists" -H "Accept: application/json" -H "Content-Type: application/json" -H "Authorization: Bearer BQCQ0zZ4OJ6jyNv11gVAC8oYGbrNcf6kuqM3zhD6qefUSMzW7rINQxcSbiId9QuPfGlgEFlI3yM59dJXiIaOmNryZgnD02C_bPv3t_m3BYRs6W-We4Pc01p5Re4rrVXsqzcWU7UdFAtJt1gtcYwjHlnhQR5fSylky-nd4gc"
-        */
-
         const result = await fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
             method: 'GET',
             headers: { 'Authorization' : 'Bearer ' + token}
@@ -106,7 +102,6 @@ const APIController = (function() {
         getUserPlaylists(token, userId){
             return _getUserPlaylists(token, userId)
         },
-
         getGenres(token) {
             return _getGenres(token);
         },
@@ -128,12 +123,12 @@ const APIController = (function() {
 
 // UI Module 
 const UIController = (function() {
-
     //object to hold references to html selectors
     const DOMElements = {
         buttonSubmit: '#btn_submit', // Reference to download button
         hfToken: '#hidden_token', // Reference to saved token
-        idSubmit: '#select_id' // reference to inputted id
+        idSubmit: '#select_id', // reference to inputted id
+        messageText: '#message_text' // reference to the message text we send to usre
     }
 
     //public methods
@@ -144,14 +139,15 @@ const UIController = (function() {
                 // genre: document.querySelector(DOMElements.selectGenre),
                 // playlist: document.querySelector(DOMElements.selectPlaylist),
                 // tracks: document.querySelector(DOMElements.divSonglist),
-
+                //songDetail: document.querySelector(DOMElements.divSongDetail)
+                
                 // inputted id
                 id: document.querySelector(DOMElements.idSubmit),
 
                 // download data button
                 submit: document.querySelector(DOMElements.buttonSubmit),
                 
-                //songDetail: document.querySelector(DOMElements.divSongDetail)
+                message: document.querySelector(DOMElements.messageText),
             }
         },
 
@@ -208,6 +204,27 @@ const UIController = (function() {
             this.inputField().playlist.innerHTML = '';
             this.resetTracks();
         },
+
+        hideSubmitButton() {
+            console.log('hide button :P')
+            this.inputField().submit.setAttribute("hidden", "hidden");
+        },
+
+        showSubmitButton() {
+            console.log('show button')
+            this.inputField().submit.removeAttribute("hidden");
+        },
+
+        hideMessageText() {
+            console.log('hide message');
+            this.inputField().message.setAttribute("hidden", "hidden");
+        },
+
+        showMessageText(message) {
+            console.log('show message');
+            this.inputField().message.innerHTML = message;
+            this.inputField().message.removeAttribute("hidden");
+        },
         
         storeToken(value) {
             document.querySelector(DOMElements.hfToken).value = value;
@@ -217,19 +234,34 @@ const UIController = (function() {
             return {
                 token: document.querySelector(DOMElements.hfToken).value
             }
-        }
+        },
+
+        storePlaylistData(value) {
+            document.querySelector(DOMElements.messageText).value = value;
+        },
+
+        getPlaylistData() {
+            return {
+                data: document.querySelector(DOMElements.messageText).value
+            }
+        },
     }
 
 })();
 
 // Combining UI Controller & API Controller to combine 
 const APPController = (function(UICtrl, APICtrl) {
+    // MESSAGES
+    const noAccountFoundMsg = 'Sorry we were unable to find an account under that username, please try again.';
+    const playlistsFoundMsg1 = 'We found a total of '; 
+    const playlistsFoundMsg2 = ' public playlists under this user id.'
+
     // get input field object ref
     const DOMInputs = UICtrl.inputField();
 
-    // get genres on page load
+    // get token on page load
     const loadToken = async () => {
-        //get the token
+       //get the token
         const token = await APICtrl.getToken();           
         //store the token onto the page
         UICtrl.storeToken(token);
@@ -248,16 +280,36 @@ const APPController = (function(UICtrl, APICtrl) {
         // check that we actually got the data 
         if(playlistData == "ERROR") {
             console.log("Something went wrong with that id try again");
+            
+            UICtrl.showMessageText(noAccountFoundMsg);
+            UICtrl.hideSubmitButton();
         } else {
             console.log(playlistData);
-            savePlaylistData(playlistData);
+            
+            UICtrl.storePlaylistData(playlistData);
+            
+            UICtrl.showMessageText(playlistsFoundMsg1 + playlistData.length + playlistsFoundMsg2);
+            //UICtrl.hideMessageText();
+            UICtrl.showSubmitButton();
         }
     });
 
-    const savePlaylistData = async(playlistsData) => {
+    // Button only shows up when a valid id has been inputted
+    DOMInputs.submit.addEventListener('click', async (e) => {
+        console.log("pressed")
+
+        playlistData = UICtrl.getPlaylistData();
+
+        console.log(playlistData)
+
+        savePlaylistData(playlistData);
+    });
+
+    const savePlaylistData = async (playlistsData) => {
         // check if successful requests
 
         console.log("Saving playlist data...")
+        playlistsData = playlistsData.data;
         console.log(playlistsData)
 
         const token = UICtrl.getStoredToken().token; 
@@ -304,8 +356,8 @@ const APPController = (function(UICtrl, APICtrl) {
             } 
 
             console.log(completeDataEntries)
-
-            downloadCSVFile(completeDataEntries);
+            console.log('download csv :P')
+            //downloadCSVFile(completeDataEntries);
         } else {
             // tell the user we didn't find any information under that userId, 
             // either incorrect user id or no public playlists
