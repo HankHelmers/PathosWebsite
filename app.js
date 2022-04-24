@@ -45,7 +45,7 @@ const APIController = (function() {
     }
 
     const _getTracks = async (token, tracksEndPoint) => {
-        const limit = 70;
+        const limit = 100;
 
         const result = await fetch(`${tracksEndPoint}?limit=${limit}`, {
             method: 'GET',
@@ -64,6 +64,9 @@ const APIController = (function() {
         });
 
         const data = await result.json();
+        if(data.error != null) {
+            return "ERROR"
+        }
         return data;
     }
 
@@ -74,6 +77,9 @@ const APIController = (function() {
         });
 
         const data = await result.json();
+        if(data.error != null) {
+            return "ERROR"
+        }
         return data;
     }
 
@@ -128,7 +134,11 @@ const UIController = (function() {
         buttonSubmit: '#btn_submit', // Reference to download button
         hfToken: '#hidden_token', // Reference to saved token
         idSubmit: '#select_id', // reference to inputted id
-        messageText: '#message_text' // reference to the message text we send to usre
+        messageText: '#message_text', // reference to the message text we send to usre
+        
+        downloadingDiv: '#downloading_bar',
+        downloadingProgress: '#downloading_progress',
+        downloadingMsg: '#downloading_msg'
     }
 
     //public methods
@@ -146,65 +156,73 @@ const UIController = (function() {
 
                 // download data button
                 submit: document.querySelector(DOMElements.buttonSubmit),
-                
                 message: document.querySelector(DOMElements.messageText),
+                
+                downloadingDiv: document.querySelector(DOMElements.downloadingDiv),
+                downloadingProgress: document.querySelector(DOMElements.downloadingProgress),
+                downloadingMsg: document.querySelector(DOMElements.downloadingMsg),
             }
         },
 
         // need methods to create select list option
-        createGenre(text, value) {
-            const html = `<option value="${value}">${text}</option>`;
-            document.querySelector(DOMElements.selectGenre).insertAdjacentHTML('beforeend', html);
-        }, 
+        // createGenre(text, value) {
+        //     const html = `<option value="${value}">${text}</option>`;
+        //     document.querySelector(DOMElements.selectGenre).insertAdjacentHTML('beforeend', html);
+        // }, 
 
-        createPlaylist(text, value) {
-            const html = `<option value="${value}">${text}</option>`;
-            document.querySelector(DOMElements.selectPlaylist).insertAdjacentHTML('beforeend', html);
-        },
+        // createPlaylist(text, value) {
+        //     const html = `<option value="${value}">${text}</option>`;
+        //     document.querySelector(DOMElements.selectPlaylist).insertAdjacentHTML('beforeend', html);
+        // },
 
-        // need method to create a track list group item 
-        createTrack(id, name) {
-            const html = `<a href="#" class="list-group-item list-group-item-action list-group-item-light" id="${id}">${name}</a>`;
-            document.querySelector(DOMElements.divSonglist).insertAdjacentHTML('beforeend', html);
-        },
+        // // need method to create a track list group item 
+        // createTrack(id, name) {
+        //     const html = `<a href="#" class="list-group-item list-group-item-action list-group-item-light" id="${id}">${name}</a>`;
+        //     document.querySelector(DOMElements.divSonglist).insertAdjacentHTML('beforeend', html);
+        // },
 
-        // need method to create the song detail
-        createTrackDetail(img, title, artist) {
+        // // need method to create the song detail
+        // createTrackDetail(img, title, artist) {
 
-            const detailDiv = document.querySelector(DOMElements.divSongDetail);
-            // any time user clicks a new song, we need to clear out the song detail div
-            detailDiv.innerHTML = '';
+        //     const detailDiv = document.querySelector(DOMElements.divSongDetail);
+        //     // any time user clicks a new song, we need to clear out the song detail div
+        //     detailDiv.innerHTML = '';
 
-            const html = 
-            `
-            <div class="row col-sm-12 px-0">
-                <img src="${img}" alt="">        
-            </div>
-            <div class="row col-sm-12 px-0">
-                <label for="Genre" class="form-label col-sm-12">${title}:</label>
-            </div>
-            <div class="row col-sm-12 px-0">
-                <label for="artist" class="form-label col-sm-12">By ${artist}:</label>
-            </div> 
-            `;
+        //     const html = 
+        //     `
+        //     <div class="row col-sm-12 px-0">
+        //         <img src="${img}" alt="">        
+        //     </div>
+        //     <div class="row col-sm-12 px-0">
+        //         <label for="Genre" class="form-label col-sm-12">${title}:</label>
+        //     </div>
+        //     <div class="row col-sm-12 px-0">
+        //         <label for="artist" class="form-label col-sm-12">By ${artist}:</label>
+        //     </div> 
+        //     `;
 
-            detailDiv.insertAdjacentHTML('beforeend', html)
-        },
+        //     detailDiv.insertAdjacentHTML('beforeend', html)
+        // },
 
-        resetTrackDetail() {
-            this.inputField().songDetail.innerHTML = '';
-        },
+        // resetTrackDetail() {
+        //     this.inputField().songDetail.innerHTML = '';
+        // },
 
-        resetTracks() {
-            this.inputField().tracks.innerHTML = '';
-            this.resetTrackDetail();
-        },
+        // resetTracks() {
+        //     this.inputField().tracks.innerHTML = '';
+        //     this.resetTrackDetail();
+        // },
 
-        resetPlaylist() {
-            this.inputField().playlist.innerHTML = '';
-            this.resetTracks();
-        },
+        // resetPlaylist() {
+        //     this.inputField().playlist.innerHTML = '';
+        //     this.resetTracks();
+        // },
 
+
+
+
+        
+            // begin downloading
         hideSubmitButton() {
             console.log('hide button :P')
             this.inputField().submit.setAttribute("hidden", "hidden");
@@ -215,17 +233,31 @@ const UIController = (function() {
             this.inputField().submit.removeAttribute("hidden");
         },
 
+            // error messages
         hideMessageText() {
-            console.log('hide message');
+            //console.log('hide message');
             this.inputField().message.setAttribute("hidden", "hidden");
         },
 
         showMessageText(message) {
-            console.log('show message');
+            //console.log('show message');
             this.inputField().message.innerHTML = message;
             this.inputField().message.removeAttribute("hidden");
         },
         
+            // progress bar
+        showProgressDiv() {
+            this.inputField().downloadingDiv.removeAttribute("hidden");
+        },
+
+        updateProgressVal(progress) {
+            console.log('progress updated ' + progress*100)
+           this.inputField().downloadingProgress.setAttribute('value', progress*100);
+        
+            console.log(this.inputField().downloadingProgress.getAttribute('value'))
+        },
+
+        // DATA STORAGE & RETRIEVAL
         storeToken(value) {
             document.querySelector(DOMElements.hfToken).value = value;
         },
@@ -289,8 +321,10 @@ const APPController = (function(UICtrl, APICtrl) {
             UICtrl.storePlaylistData(playlistData);
             
             UICtrl.showMessageText(playlistsFoundMsg1 + playlistData.length + playlistsFoundMsg2);
-            //UICtrl.hideMessageText();
-            UICtrl.showSubmitButton();
+            
+            if(playlistData.length >= 1) {//UICtrl.hideMessageText();
+                UICtrl.showSubmitButton();
+            }
         }
     });
 
@@ -305,64 +339,82 @@ const APPController = (function(UICtrl, APICtrl) {
         savePlaylistData(playlistData);
     });
 
+    // check if successful requests
     const savePlaylistData = async (playlistsData) => {
-        // check if successful requests
-
         console.log("Saving playlist data...")
-        playlistsData = playlistsData.data;
-        console.log(playlistsData)
 
-        const token = UICtrl.getStoredToken().token; 
+        playlistsData = playlistsData.data;          // REFERENCE TO THE PLAYLIST DATA JSON
+
+        const token = UICtrl.getStoredToken().token; // REFERENCE TO API TOKEN TO MAKE CALLS 
         const numPlaylists = playlistsData.length;
 
-        console.log(numPlaylists)
         if(numPlaylists >= 1) {            
+
+            UICtrl.showProgressDiv();
+
             // save playlist tracks data into a array :)
-            
-            // ONLY DOES 1 PLAYLIST ATM******
-
-            // GET TRACKS FOR PLAYSTS
-            const trackGetLink = playlistsData[0].tracks.href;
-            tracksData = await APICtrl.getTracks(token, trackGetLink) // holds all the tracks data from playlist
-            
-            console.log(tracksData)
-
-            trackIds = []; // holds the ids of this playlists tracks
-
-            for(let i = 0; i < tracksData.length; i++) {
-                trackIds[i] = tracksData[i].track.id; // get only the track ids
-            }
-
-            console.log(trackIds)
-
             completeDataEntries = [];
 
-            // ADD ALL TRACK AUDIO FEATURES TO COMPLETE DATA ENTRIES
-            for(let i = 0; i < tracksData.length;i++) { 
-                audioFeatureData = await APICtrl.getTrackAudioFeatures(token, trackIds[i])
+            for(let i = 0; i < numPlaylists; i++) { 
+                // GET TRACKS FOR PLAYSTS
+                const trackGetLink = playlistsData[i].tracks.href;
+                tracksData = await APICtrl.getTracks(token, trackGetLink) // holds all the tracks data from playlist
+                
+                console.log(tracksData)
 
-                completeDataEntries[i] = [
-                    tracksData[i].track.name,
-                    audioFeatureData.acousticness,
-                    audioFeatureData.danceability,
-                    audioFeatureData.energy,
-                    audioFeatureData.duration_ms,
-                    audioFeatureData.instrumentalness,
-                    audioFeatureData.liveness,
-                    audioFeatureData.loudness,
-                    audioFeatureData.tempo,
-                    audioFeatureData.valence,
-                ]
-            } 
+                trackIds = []; // holds the ids of this playlists tracks
+
+                for(let i = 0; i < tracksData.length; i++) {
+                    trackIds[i] = tracksData[i].track.id; // get only the track ids
+                }
+
+                console.log(trackIds)
+                
+                await sleep(5000);
+
+                // // ADD ALL TRACK AUDIO FEATURES TO COMPLETE DATA ENTRIES
+                completeDataEntriesCurrLength = completeDataEntries.length;
+
+                for(let i = 0; i < tracksData.length;i++) { 
+                    audioFeatureData = await APICtrl.getTrackAudioFeatures(token, trackIds[i])
+                    
+                    if(audioFeatureData == "ERROR") {
+                        continue;
+                    } else {
+                        console.log(audioFeatureData)
+                    }
+
+                    completeDataEntries[i + completeDataEntriesCurrLength] = [
+                        tracksData[i].track.name,
+                        audioFeatureData.acousticness,
+                        audioFeatureData.danceability,
+                        audioFeatureData.energy,
+                        audioFeatureData.duration_ms,
+                        audioFeatureData.instrumentalness,
+                        audioFeatureData.liveness,
+                        audioFeatureData.loudness,
+                        audioFeatureData.tempo,
+                        audioFeatureData.valence,
+                    ]
+                } 
+
+                console.log('playlists complete: ' + i)
+                // update ui progress
+                UICtrl.updateProgressVal("" + ( (i+1) / numPlaylists));
+            }
 
             console.log(completeDataEntries)
             console.log('download csv :P')
-            //downloadCSVFile(completeDataEntries);
+            downloadCSVFile(completeDataEntries);
         } else {
             // tell the user we didn't find any information under that userId, 
             // either incorrect user id or no public playlists
             console.log("No playlists found")
         }
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     function downloadCSVFile(completeDataEntries) {

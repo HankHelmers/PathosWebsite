@@ -5,6 +5,10 @@
     text-align: center;
 }
 
+progress {
+    width: 100%;
+}
+
 
 /* .btn.dropdown-toggle  {
     width:150px;

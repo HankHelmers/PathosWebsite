@@ -44,7 +44,12 @@
 
             <div class="col-sm-6 row form-group px-0 center">
                 <button type="button" id="btn_submit" class="btn col-sm-12" hidden>Download your Spotify Data</button>
-            </div>          
+            </div>
+            
+            <div class="col-sm-6 row form-group px-0 center" id="downloading_bar" hidden>
+                <h2 id="dowloading_msg">Downloading in progress:</h2>
+                <progress value="10" max="100" id="downloading_progress"> 32% </progress>
+            </div>
         </form> 
 
         <div class="row">
