@@ -389,15 +389,16 @@ const APPController = (function(UICtrl, APICtrl) {
                     completeDataEntries[i + completeDataEntriesCurrLength] = [
                         tracksData[i].track.name,
                         tracksData[i].track.artists[0].name,
+                        audioFeatureData.valence,
+                        audioFeatureData.energy,
                         audioFeatureData.acousticness,
                         audioFeatureData.danceability,
-                        audioFeatureData.energy,
                         audioFeatureData.duration_ms,
                         audioFeatureData.instrumentalness,
                         audioFeatureData.liveness,
                         audioFeatureData.loudness,
                         audioFeatureData.tempo,
-                        audioFeatureData.valence,
+                        tracksData[i].track.album.images[0].url,
                     ]
                 } 
 
@@ -422,7 +423,7 @@ const APPController = (function(UICtrl, APICtrl) {
 
     function downloadCSVFile(completeDataEntries) {
          //define the heading for each row of the data  
-        var csv = 'name,artist,acousticness,danceability,energy,duration_ms,instrumentalness,liveness,loudness,tempo,valence\n';  
+        var csv = 'name,artist,valence,energy,acousticness,danceability,duration_ms,instrumentalness,liveness,loudness,tempo,cover\n';  
         
         //merge the data with CSV  
         completeDataEntries.forEach(function(row) {  
