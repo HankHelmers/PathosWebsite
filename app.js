@@ -384,7 +384,6 @@ const APPController = (function(UICtrl, APICtrl) {
                         console.log(audioFeatureData)
                     }
 
-
                     //console.log()
 
                     completeDataEntries[i + completeDataEntriesCurrLength] = [
