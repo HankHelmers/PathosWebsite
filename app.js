@@ -346,7 +346,7 @@ const APPController = (function(UICtrl, APICtrl) {
         playlistsData = playlistsData.data;          // REFERENCE TO THE PLAYLIST DATA JSON
 
         const token = UICtrl.getStoredToken().token; // REFERENCE TO API TOKEN TO MAKE CALLS 
-        const numPlaylists = 10; //playlistsData.length; *****
+        const numPlaylists = playlistsData.length; 
 
         if(numPlaylists >= 1) {            
 
