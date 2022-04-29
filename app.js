@@ -399,6 +399,7 @@ const APPController = (function(UICtrl, APICtrl) {
                         audioFeatureData.loudness,
                         audioFeatureData.tempo,
                         tracksData[i].track.album.images[0].url,
+                        tracksData[i].track.preview_url,
                     ]
                 } 
 
@@ -423,7 +424,7 @@ const APPController = (function(UICtrl, APICtrl) {
 
     function downloadCSVFile(completeDataEntries) {
          //define the heading for each row of the data  
-        var csv = 'name,artist,valence,energy,acousticness,danceability,duration_ms,instrumentalness,liveness,loudness,tempo,cover\n';  
+        var csv = 'name,artist,valence,energy,acousticness,danceability,duration_ms,instrumentalness,liveness,loudness,tempo,cover,preview\n';  
         
         //merge the data with CSV  
         completeDataEntries.forEach(function(row) {  
