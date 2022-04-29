@@ -378,6 +378,10 @@ const APPController = (function(UICtrl, APICtrl) {
                 for(let i = 0; i < tracksData.length;i++) { 
                     audioFeatureData = await APICtrl.getTrackAudioFeatures(token, trackIds[i])
                     
+                    if(i > 50) {
+                        await sleep(100);
+                    }
+
                     if(audioFeatureData == "ERROR") {
                         continue;
                     } else {
