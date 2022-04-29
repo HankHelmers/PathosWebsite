@@ -330,7 +330,7 @@ const APPController = (function(UICtrl, APICtrl) {
 
     // Button only shows up when a valid id has been inputted
     DOMInputs.submit.addEventListener('click', async (e) => {
-        console.log("pressed")
+        console.log("pressed new!!!")
 
         playlistData = UICtrl.getPlaylistData();
 
