@@ -346,7 +346,7 @@ const APPController = (function(UICtrl, APICtrl) {
         playlistsData = playlistsData.data;          // REFERENCE TO THE PLAYLIST DATA JSON
 
         const token = UICtrl.getStoredToken().token; // REFERENCE TO API TOKEN TO MAKE CALLS 
-        const numPlaylists = playlistsData.length;
+        const numPlaylists = 10; //playlistsData.length; *****
 
         if(numPlaylists >= 1) {            
 
@@ -431,7 +431,11 @@ const APPController = (function(UICtrl, APICtrl) {
                 
             // if name has a comma => make it a space
             if(row[0].includes(',')) {
-                row[0] = row[0].replace(",", " ")
+                row[0] = row[0].replaceAll(",", " ")
+            }
+            // if name has a comma => make it a space
+            if(row[1].includes(',')) {
+                row[1] = row[1].replaceAll(",", " ")
             }
 
             csv += row.join(',');  
