@@ -1,6 +1,5 @@
 .center {
     margin: auto;
-    width: 50%;
     padding: 10px;
     text-align: center;
 }
@@ -9,6 +8,31 @@ progress {
     width: 100%;
 }
 
+body {
+    background-image: url('Background.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;  
+    background-size: cover;
+}
+
+h1, input {
+    color: white;
+}
+
+a {
+    color:whitesmoke;
+    font-size: xx-large;
+    text-decoration: underline;
+}
+
+p {
+    color: white;
+    font-size: larger;
+}
+
+button {
+    background: white;
+}
 
 /* .btn.dropdown-toggle  {
     width:150px;
