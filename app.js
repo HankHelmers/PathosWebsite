@@ -365,7 +365,7 @@ const APPController = (function(UICtrl, APICtrl) {
                 trackIds = []; // holds the ids of this playlists tracks
 
                 for(let i = 0; i < 100; i++) {
-                    trackIds[i] = tracksData[i].track.id; // get only the track ids
+                    trackIds[i] = tracksData[i].track; // get only the track ids
                 }
 
                 console.log(trackIds)
