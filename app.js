@@ -364,13 +364,12 @@ const APPController = (function(UICtrl, APICtrl) {
 
                 trackIds = []; // holds the ids of this playlists tracks
 
-                for(let i = 0; i < tracksData.length; i++) {
+                for(let i = 0; i < 100; i++) {
                     trackIds[i] = tracksData[i].track.id; // get only the track ids
                 }
 
                 console.log(trackIds)
-                console.log('made it')
-                await sleep(10000);
+                await sleep(5000);
 
                 // // ADD ALL TRACK AUDIO FEATURES TO COMPLETE DATA ENTRIES
                 completeDataEntriesCurrLength = completeDataEntries.length;
