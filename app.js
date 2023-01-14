@@ -369,8 +369,8 @@ const APPController = (function(UICtrl, APICtrl) {
                 }
 
                 console.log(trackIds)
-                
-                await sleep(5000);
+                console.log('made it')
+                await sleep(10000);
 
                 // // ADD ALL TRACK AUDIO FEATURES TO COMPLETE DATA ENTRIES
                 completeDataEntriesCurrLength = completeDataEntries.length;
